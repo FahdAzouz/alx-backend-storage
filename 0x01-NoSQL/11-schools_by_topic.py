@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-'''Task 10 module'''
+'''Task 11 module'''
 
 
-def update_topics(mongo_collection, name, topics):
-    '''update topics based on name'''
-    mongo_collection.update_many({'name': name}, {'$set': {'topics': topics}})
+def schools_by_topic(mongo_collection, topic):
+    '''return list schools with specific topic'''
+    return mongo_collection.find({'topics': {'$in': topic}})
