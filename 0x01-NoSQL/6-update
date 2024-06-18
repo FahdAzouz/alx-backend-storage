@@ -1,3 +1,5 @@
-// add new attribute
-
-db.school.update({name:"Holberton school"}, {$set: {address: "972 Mission Street"}}, { multi: true })
+// update a document with name equals to name = Holberton school and add the new attr address
+db.school.update(
+	{name:"Holberton school"},
+	{$set: {address: "972 Mission street"}},
+	{ multi: true })
