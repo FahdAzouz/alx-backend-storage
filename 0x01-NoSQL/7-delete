@@ -1,0 +1,2 @@
+//delete all matcehd documents
+db.school.delete_many({name: "Holberton school"})
