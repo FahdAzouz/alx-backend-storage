@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-'''Module 0
-'''
-
+"""Module declares a redis class and methods"""
 import redis
 from uuid import uuid4
 from typing import Union, Callable, Optional
@@ -56,17 +54,25 @@ def replay(fn: Callable):
             outp = ""
         print("{}(*{}) -> {}".format(func_name, inp, outp))
 
+
 class Cache:
-    '''declares a cash redis class'''
+    '''declares a Cache redis class'''
     def __init__(self):
-        '''upon init bla bla'''
+        '''upon init to store an instance and flush'''
         self._redis = redis.Redis(host='localhost', port=6379, db=0)
         self._redis.flushdb()
-    
+
     @call_history
     @count_calls
-    def get(self, key: str, fn: Optional[Callable] = None) -> Union[str, bytes, int, float]:
-        '''take a key string argument and an optional Callable argument named fn'''
+    def store(self, data: Union[str, bytes, int, float]) -> str:
+        '''takes a data argument and returns a string'''
+        rkey = str(uuid4())
+        self._redis.set(rkey, data)
+        return rkey
+
+    def get(self, key: str,
+            fn: Optional[Callable] = None) -> Union[str, bytes, int, float]:
+        '''convert the data back to the desired format'''
         value = self._redis.get(key)
         if fn:
             value = fn(value)
@@ -76,7 +82,7 @@ class Cache:
         '''parametrize Cache.get with correct conversion function'''
         value = self._redis.get(key)
         return value.decode("utf-8")
-    
+
     def get_int(self, key: str) -> int:
         '''parametrize Cache.get with correct conversion function'''
         value = self._redis.get(key)
@@ -84,10 +90,4 @@ class Cache:
             value = int(value.decode("utf-8"))
         except Exception:
             value = 0
-        return value    
-
-    def store(self, data: Union[str, bytes, int, float]) -> str:
-        '''generate a random key (e.g. using uuid), store the input data in Redis using the random key and return the key.'''
-        rkey = str(uuid4())
-        self._redis.set(rkey, data)
-        return rkey
+        return value
